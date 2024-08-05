@@ -17,29 +17,38 @@ const scrapeLogic = async (res) => {
   try {
     const page = await browser.newPage();
 
-    await page.goto("https://developer.chrome.com/");
+    // Navigate to the Leetify login page
+    await page.goto("https://leetify.com/login");
 
-    // Set screen size
-    await page.setViewport({ width: 1080, height: 1024 });
+    // Wait for the email input field to be visible
+    await page.waitForSelector('input[type="email"]');
 
-    // Type into search box
-    await page.type(".search-box__input", "automate beyond recorder");
+    // Type in the email and password
+    await page.type('input[type="email"]', "m.jaskolowski1994@gmail.com");
+    await page.type('input[type="password"]', "Creative12345!");
 
-    // Wait and click on first result
-    const searchResultSelector = ".search-box__link";
-    await page.waitForSelector(searchResultSelector);
-    await page.click(searchResultSelector);
+    // Click the login button
+    await page.click('button[type="submit"]');
 
-    // Locate the full title with a unique string
-    const textSelector = await page.waitForSelector(
-      "text/Customize and automate"
-    );
-    const fullTitle = await textSelector.evaluate((el) => el.textContent);
+    // Wait for navigation to complete
+    await page.waitForNavigation();
 
-    // Print the full title
-    const logStatement = `The title of this blog post is ${fullTitle}`;
-    console.log(logStatement);
-    res.send(logStatement);
+    await page.goto("https://leetify.com/app/matches/list");
+
+    // Wait for matches to load
+    await waitForMatchesToLoad(page);
+
+    const matchIds = await page.evaluate(() => {
+      const matchElements = document.querySelectorAll(
+        "app-matches-list-item a"
+      );
+      return Array.from(matchElements).map((element) => {
+        const href = element.getAttribute("href");
+        return href.split("/").pop();
+      });
+    });
+    res.send(matchIds);
+    return matchIds;
   } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
