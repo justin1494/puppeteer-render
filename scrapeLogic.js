@@ -1,6 +1,11 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 
+const matchesTimeout = () => {
+  let matchIds
+  
+}
+
 async function waitForMatchesToLoad(page) {
   await page.waitForFunction(
     () => {
@@ -11,8 +16,7 @@ async function waitForMatchesToLoad(page) {
   );
 }
 
-
-const scrapeLogic = async (res) => {
+const scrapeMatches = async () => {
   const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandbox",
@@ -58,14 +62,13 @@ const scrapeLogic = async (res) => {
         return href.split("/").pop();
       });
     });
-    res.send(matchIds);
+    // res.send(matchIds);
     return matchIds;
   } catch (e) {
-    console.error(e);
-    res.send(`Something went wrong while running Puppeteer: ${e}`);
+    console.error(`Something went wrong while running Puppeteer: ${e}`);
   } finally {
     await browser.close();
   }
 };
 
-module.exports = { scrapeLogic };
+module.exports = { scrapeMatches };
