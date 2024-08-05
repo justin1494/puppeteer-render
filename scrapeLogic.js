@@ -1,6 +1,17 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 
+async function waitForMatchesToLoad(page) {
+  await page.waitForFunction(
+    () => {
+      const items = document.querySelectorAll("app-matches-list-item");
+      return items.length > 0;
+    },
+    { timeout: 30000 }
+  );
+}
+
+
 const scrapeLogic = async (res) => {
   const browser = await puppeteer.launch({
     args: [
