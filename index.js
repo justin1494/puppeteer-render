@@ -51,7 +51,7 @@ app.get("/scrape", (req, res) => {
 
     if (rows.length > 0) {
       // Data exists in database, serve it
-      res.json(rows);
+      res.json(rows.map((row) => row.id));
     } else {
       // No data in database, scrape and save
       scrapeMatches()
