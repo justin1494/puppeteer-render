@@ -43,7 +43,7 @@ const matchesTimeout = async () => {
 setInterval(matchesTimeout, SCRAPE_INTERVAL);
 
 app.get("/scrape", (req, res) => {
-  db.all("SELECT * FROM matches", [], (err, rows) => {
+  db.all("SELECT id FROM matches", [], (err, rows) => {
     if (err) {
       console.error("Error querying database:", err);
       return res.status(500).json({ error: "Internal server error" });
